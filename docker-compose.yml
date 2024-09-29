@@ -12,8 +12,8 @@ services:
       SCHEMA_APP_USER: ${SCHEMA_APP_USER}
       SCHEMA_APP_PASSWORD: ${SCHEMA_APP_PASSWORD}
     volumes:
-      - ./init-db.sh:/docker-entrypoint-initdb.d/a.sh
-      - ./health-check.sh:/usr/local/bin/health_check.sh
+      - ./docker/database/init-db.sh:/docker-entrypoint-initdb.d/a.sh
+      - ./docker/database/health-check.sh:/usr/local/bin/health_check.sh
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
     healthcheck:
