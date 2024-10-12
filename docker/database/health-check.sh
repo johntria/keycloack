@@ -1,13 +1,5 @@
 #!/bin/bash
-set -e
 
-# Wait for MySQL to start
-echo "Waiting for MySQL to start..."
-until mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1;" > /dev/null 2>&1; do
-  sleep 1
-done
-
-# Function to check database and user existence
 check_health() {
   # Check if the Keycloak database exists
   KC_DB_EXISTS=$(mysql --user=root --password=$MYSQL_ROOT_PASSWORD --execute="SHOW DATABASES LIKE '$SCHEMA_KC';" 2>/dev/null)
@@ -42,17 +34,12 @@ check_health() {
     return 1
   fi
 
-  return 0  # All checks passed
+  return 0
 }
 
-# Main loop to check databases and users until they exist
-while true; do
-  check_health
-  if [ $? -eq 0 ]; then
-    echo "Both Keycloak and App databases and users are healthy!"
-    exit 0
-  else
-    echo "Health check failed. Retrying in 5 seconds..."
-    sleep 5
-  fi
-done
+if check_health; then
+  echo "Both Keycloak and App databases and users are healthy!"
+else
+  echo "Health check failed."
+  exit 1
+fi
